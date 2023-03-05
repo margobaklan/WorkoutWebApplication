@@ -1,0 +1,40 @@
+﻿@model WorkoutWebApplication.Models.PlansWorkout
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Додавання тренування до плану @ViewBag.PlanName</h1>
+
+<h4>PlansWorkout</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Workout" class="control-label"></label>
+                <select asp-for="WorkoutId" class ="form-control" asp-items="ViewBag.WorkoutId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="WeekDay" class="control-label"></label>
+                <select asp-for="WeekDayId" class ="form-control" asp-items="ViewBag.WeekDayId"></select>
+            </div>
+            @*
+            <div class="form-group">
+                <label asp-for="PlanId" class="control-label"></label>
+                <select asp-for="PlanId" class ="form-control" asp-items="ViewBag.PlanId"></select>
+            </div>*@
+            <input type="hidden" value="@ViewBag.PlanId" name="PlanId"/>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-route-id="@ViewBag.PlanId" asp-route-name="PlanId">Back to List</a>
+</div>
+

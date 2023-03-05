@@ -1,0 +1,99 @@
+﻿@model IEnumerable<WorkoutWebApplication.Models.PlansWorkout>
+
+@{
+    ViewData["Title"] = "Тренування за планом";
+}
+@if (User.IsInRole("admin"))
+{
+
+<h1>Тренування за планом @ViewBag.PlanName</h1>
+
+<p>
+    @*<a asp-action="Create" asp-route-id="@ViewBag.PlanId">Додати тренування</a>*@
+    @Html.ActionLink("Додати тренування", "Create", new {planId = @ViewBag.PlanId})
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Plan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WeekDay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Workout)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Plan.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WeekDay.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Workout.Name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new {planId = @ViewBag.PlanId, id = item.Id}) |
+                @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |*@
+                  
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+
+                @Html.ActionLink("Delete", "Delete", new {planId = @ViewBag.PlanId, id = item.Id}) |
+                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+}
+@if (User.IsInRole("user"))
+{
+
+    <h1>Тренування за планом @ViewBag.PlanName</h1>
+    <p>
+    @*<a asp-action="Create" asp-route-id="@ViewBag.PlanId">Додати тренування</a>*@
+        @Html.ActionLink("Підписатись", "Subscribe", new {planId = @ViewBag.PlanId})
+</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Plan)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.WeekDay)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Workout)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Plan.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WeekDay.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Workout.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

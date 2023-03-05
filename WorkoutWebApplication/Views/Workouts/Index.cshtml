@@ -1,0 +1,110 @@
+﻿@model IEnumerable<WorkoutWebApplication.Models.Workout>
+
+@{
+    ViewData["Title"] = "Workouts";
+}
+@if (User.IsInRole("admin"))
+{
+<h1>Workouts</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Duration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Equipment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fa)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Wt)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Duration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Equipment)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fa.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Wt.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+}
+@if (User.IsInRole("user"))
+{
+    <h1>Workouts</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Duration)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Equipment)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fa)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Wt)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Duration)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Equipment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fa.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Wt.Name)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

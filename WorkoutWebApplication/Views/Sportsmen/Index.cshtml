@@ -3,39 +3,71 @@
 @{
     ViewData["Title"] = "Index";
 }
+@if (User.IsInRole("admin"))
+{
+    @*<h1>Спортсмени</h1>*@
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Surname)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Surname)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    @*<p>
+        <a asp-action="Create">Додати</a>
+    </p>*@
+    @*<table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Surname)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Surname)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                </td>
+            </tr>
 }
     </tbody>
-</table>
+</table>*@
+<p>@User.Identity.Name</p>
+
+    <form method="post" asp-controller="Account" asp-action="Logout">
+        <input type="submit" value="Вихід" />
+    </form>
+}
+@if (User.IsInRole("user"))
+{@*
+    <div class="cqwqLD">
+        <div class="bOYTsB">
+            <div class="eoQEbN">
+                <span class="m__r--10">Вероника Хрусталева</span>
+            </div>
+            <div class="profile-link">
+                <span class="profile-link__username">Вероника Хрусталева</span>
+                <span class="profile-link__username">Вероника Хрусталева</span>
+                <span class="profile-link__username">Вероника Хрусталева</span>
+                <span class="profile-link__username">Вероника Хрусталева</span>
+            </div>
+        </div>
+    </div>*@
+    <p>Email:          @User.Identity.Name</p>
+    <p>Ім'я:           @ViewBag.FirstName</p>
+    <p>Прізвище:       @ViewBag.Surname</p>
+    <p>Рік народження: @ViewBag.Year</p>
+    <a class="btn btn-sm btn-primary" asp-action="ChangePassword" asp-route-id="@ViewBag.Id">Змінити пароль</a>
+
+    <form method="post" asp-controller="Account" asp-action="Logout">
+        <input type="submit" value="Вихід" />
+    </form>
+}

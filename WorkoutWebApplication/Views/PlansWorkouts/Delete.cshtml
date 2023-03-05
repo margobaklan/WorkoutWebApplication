@@ -4,11 +4,11 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>Видалити тренування з плану?</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3></h3>
 <div>
-    <h4>PlansWorkout</h4>
+    @*<h4>PlansWorkout</h4>*@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -35,7 +35,7 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="hidden" value="@ViewBag.PlanId" name="PlanId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index" asp-route-id="@ViewBag.PlanId" asp-route-name="PlanId">Back to List</a>
+        <input type="submit" value="Видалити" class="btn btn-danger" /> @*|
+        <a asp-action="Index" asp-route-id="@ViewBag.PlanId" asp-route-name="PlanId">Назад</a>*@
     </form>
 </div>

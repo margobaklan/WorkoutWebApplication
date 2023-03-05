@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -169,9 +171,105 @@ namespace WorkoutWebApplication.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(IFormFile fileExcel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (fileExcel != null)
+                {
+                    using (var stream = new FileStream(fileExcel.FileName, FileMode.Create))
+                    {
+                        await fileExcel.CopyToAsync(stream);
+                        //string filestream = stream.ToString();
+                        using (XLWorkbook workBook = new XLWorkbook(stream))
+                        {
+                            var worksheet = workBook.Worksheet(1);
+                            // перегляд усіх листів (в даному випадку категорій)
+
+                            // worksheet.Name - назва категорії. Пробуємо знайти в БД, якщо відсутня, то створюємо нову
+                            //Workout newWorkout;
+                            //var c = (from workout in _context.Workouts
+                            //         where workout.Name.Contains(worksheet.Name)
+                            //         select workout).ToList();
+                            //if (c.Count > 0)
+                            //{
+                            //    newWorkout = c[0];
+                            //}
+                            //else
+                            //{
+                            //    newWorkout = new Workout();
+                            //    newWorkout.Name = worksheet.Name;
+                            //    newWorkout.Info = "from EXCEL";
+                            //    // додати в контекст
+                            //    _context.Workouts.Add(newWorkout);
+                            //}
+
+                            // перегляд усіх рядків
+                            foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
+                            {
+                                try
+                                {
+                                    var wo = (from wor in _context.Workouts
+                                             where wor.Name.Contains(row.Cell(1).Value.ToString())
+                                             select wor).ToList();
+                                    if (wo.Count == 0)
+                                    {
+                                        Workout workout = new Workout();
+                                        workout.Name = row.Cell(1).Value.ToString();
+                                        workout.Duration = row.Cell(4).GetValue<int>();
+                                        workout.Equipment = row.Cell(5).GetValue<Boolean>();
+                                        FocusArea fa;
+                                        var f = (from focus in _context.FocusAreas
+                                                 where focus.Name.Contains(row.Cell(2).Value.ToString())
+                                                 select focus).ToList();
+                                        if (f.Count > 0)
+                                        {
+                                            fa = f[0];
+                                            workout.Fa = fa;
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError("focusarea", "Перевірте правильність фокуса тіла");
+                                        }
+                                        WorkoutType wt;
+                                        var w = (from wtype in _context.WorkoutTypes
+                                                 where wtype.Name.Contains(row.Cell(3).Value.ToString())
+                                                 select wtype).ToList();
+                                        if (w.Count > 0)
+                                        {
+                                            wt = w[0];
+                                            workout.Wt = wt;
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError("workouttype", "Перевірте правильність типа тренувань");
+                                        }
+                                        _context.Workouts.Add(workout);
+                                    }
+                                                                    
+                                }
+                                catch (Exception e)
+                                {
+                                    // logging самостійно :)
+                                }
+                            }
+
+                        }
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+
         private bool WorkoutExists(int id)
         {
           return (_context.Workouts?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
     }
 }

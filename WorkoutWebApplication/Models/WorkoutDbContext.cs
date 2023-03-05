@@ -67,6 +67,7 @@ public partial class WorkoutDbContext : DbContext
         modelBuilder.Entity<Subscription>(entity =>
         {
             entity.Property(e => e.Date).HasColumnType("date");
+            
 
             entity.HasOne(d => d.Plan).WithMany(p => p.Subscriptions)
                 .HasForeignKey(d => d.PlanId)

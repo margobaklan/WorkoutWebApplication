@@ -1,17 +1,28 @@
 ﻿@{
     ViewData["Title"] = "Лабораторна роботи ІСтаТП 2021. Тренування";
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
 }
 
-@if (User.Identity.IsAuthenticated)
-{
-    <p>@User.Identity.Name</p>
+@*@if (User.Identity.IsAuthenticated)
+{*@
+    <div class="Home-styled_box">
+    <h1 class="Home-styled_available">Тренуйтеся безкоштовно</h1>
+
+        <div class="Home-styled_button_group">
+            <a href="/Plans" class="Button-styled__LinkButton">Почати план тренування</a>
+            <a href="/Workouts" class="Button-styled__LinkButton">Доступні відео</a>
+        </div>
+    </div>
+    @*<p>@User.Identity.Name</p>
 
     <form method="post" asp-controller="Account" asp-action="Logout">
         <input type="submit" value="Вихід" />
-    </form>
-}
+    </form>*@
+@*}*@
+
+@*
 else
 {
     <a asp-controller="Account" asp-action="Login">Вхід</a>
     <a asp-controller="Account" asp-action="Register">Реєстація</a>
-}
+}*@

@@ -4,21 +4,27 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+@*<h1>Create</h1>*@
 
-<h4>Subscription</h4>
+<h3>Підписатися на цей план?</h3>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <h5>
+                Розпочавши план, ви зможете переглянути його у свої підписках. Ви готові почати?
+            </h5>
              @*
             <div class="form-group">
                 <label asp-for="PlanId" class="control-label"></label>
                 <select asp-for="PlanId" class ="form-control" asp-items="ViewBag.PlanId"></select>
             </div>*@
             <input type="hidden" value="@ViewBag.PlanId" name="PlanId" />
-            <div class="form-group">
+
+            <input type="hidden" value="@ViewBag.UserId" name="UserId" />
+            @*<div class="form-group">
                 <label asp-for="SportsmanId" class="control-label"></label>
                 <select asp-for="SportsmanId" class ="form-control" asp-items="ViewBag.SportsmanId"></select>
             </div>
@@ -27,15 +33,17 @@
                 <label asp-for="Date" class="control-label"></label>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Так" class="btn btn-primary" />
+                @*<a asp-action="Index" class="btn btn-primary" ActionLink="">Ні</a>*@
+                @Html.ActionLink( "Ні",  "Index",  "Plans", new RouteValueDictionary(), htmlAttributes: new { @class = "btn btn-primary", @role="button" })
             </div>
         </form>
     </div>
 </div>
-
+@*
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+*@

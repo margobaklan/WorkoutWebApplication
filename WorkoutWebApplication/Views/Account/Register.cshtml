@@ -1,5 +1,5 @@
 ﻿@model WorkoutWebApplication.ViewModel.RegisterViewModel
-<h2>Реєстрація нового користувача</h2>
+<h2>Реєстрація</h2>
 <form method="post" asp-controller="Account" asp-action="Register">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
@@ -9,7 +9,17 @@
     </div>
     <div>
         <label asp-for="Year"></label><br />
-        <input asp-for="Year" />
+       @* <input asp-for="Year" />*@
+        <style>
+            .MakeWideHeight {
+                width: 188px;
+                height: 32px;
+            }
+        </style> 
+
+        @Html.DropDownListFor(m => m.Year, Enumerable.Range(0, 84).
+        Select(i => new SelectListItem { Text = (DateTime.Now.Year-16-i).ToString(), Value = (DateTime.Now.Year-16-i).ToString() }), 
+        "Оберіть рік", new { @class = "MakeWideHeight", @required = "required" })
         <span asp-validation-for="Year"></span>
     </div>
     <div>
@@ -23,6 +33,6 @@
         <span asp-validation-for="PasswordConfirmed"></span>
     </div>
     <div>
-        <input type="submit" value="Реєстрація" />
+        <input type="submit" value="Далі" />
     </div>
 </form>

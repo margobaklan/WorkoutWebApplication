@@ -40,7 +40,10 @@ namespace WorkoutWebApplication.Controllers
                 {
                     // установка кукі
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+                    await _userManager.AddToRoleAsync(user, "user");
+                    await _signInManager.RefreshSignInAsync(user);
+                    return RedirectToAction("Create", "Sportsmen", new { userrId = user.Id });
+                    //return RedirectToAction("Index", "Home");
                 }
                 else
                 {

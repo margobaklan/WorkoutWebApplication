@@ -4,9 +4,11 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Додавання тренування до плану @ViewBag.PlanName</h1>
-
-<h4>PlansWorkout</h4>
+<h1>Додати тренування до плану @ViewBag.PlanName</h1>
+@Html.ValidationSummary("",
+    new { @class = "text-danger" },
+    "DuplicatePlansWorkout")
+@*<h4>PlansWorkout</h4>*@
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -28,13 +30,13 @@
             <input type="hidden" value="@ViewBag.PlanId" name="PlanId"/>
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Додати" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
+@*
 <div>
-    <a asp-action="Index" asp-route-id="@ViewBag.PlanId" asp-route-name="PlanId">Back to List</a>
-</div>
+    <a asp-action="Index" asp-route-id="@ViewBag.PlanId" asp-route-name="PlanId">Назад</a>
+</div>*@
 

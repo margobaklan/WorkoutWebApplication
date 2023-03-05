@@ -20,3 +20,86 @@ html {
 body {
   margin-bottom: 60px;
 }
+.account-buttons-register, .account-buttons-login {
+    font-family: Manrope, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    height: 35px;
+    border-radius: 35px;
+    padding: 0px 20px;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    transition: all 0.3s ease 0s;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    outline: none;
+    margin: 0px 3px;
+}
+    .account-buttons-register:hover {
+        background-color: #303033;
+        color: white;
+        border: 1px solid transparent;
+    }
+    .account-buttons-login:hover {
+        background-color: white;
+        color: #303033;
+        border: 1px solid black;
+    }
+.account-buttons-register {
+    background-color: transparent;
+    color: #303033;
+}
+.account-buttons-login {
+    background-color: #303033;
+    color: white;
+    border: 1px solid black;
+}
+.Header-styled-authbuttons {
+    margin: 0;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    justify-content: flex-end;
+    marker: none;
+}
+ul {
+    list-style-type: none;
+    margin-bottom: 0;
+}
+.account-icon-ul {
+    height: 100%;
+    -webkit-box-pack: end;
+    justify-content: end;
+    display: grid;
+    -webkit-box-align: center;
+    align-items: center;
+    grid-template-columns: auto 98px ;
+    
+}
+.account-icon {
+    position: relative;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-feature-settings: "tnum","tnum";
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+    .account-icon > img {
+        display: block;
+        width: 80%;
+        height: 80%;
+        margin: 3px 3.5px;
+    }

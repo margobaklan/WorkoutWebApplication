@@ -2,6 +2,10 @@
 using WorkoutWebApplication.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using WorkoutWebApplication.Models;
+using System.Dynamic;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace WorkoutWebApplication.Controllers
 {
@@ -13,14 +17,18 @@ namespace WorkoutWebApplication.Controllers
         }*/
         RoleManager<IdentityRole> _roleManager;
         UserManager<User> _userManager;
-        public RolesController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        private readonly WorkoutDbContext _context;
+        public RolesController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager, WorkoutDbContext context)
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            _context = context;
         }
+        [Authorize(Roles = "admin")]
         public IActionResult Index() => View(_roleManager.Roles.ToList());
+        [Authorize(Roles = "admin")]
         public IActionResult UserList() => View(_userManager.Users.ToList());
-
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(string userId)
         {
             // отримуємо користувача
@@ -42,6 +50,7 @@ namespace WorkoutWebApplication.Controllers
 
             return NotFound();
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Edit(string userId, List<string> roles)
         {

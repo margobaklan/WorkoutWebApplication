@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,9 +22,14 @@ namespace WorkoutWebApplication.Controllers
 
         // GET: Subscriptions
         public async Task<IActionResult> Index()
-        {
-            var workoutDbContext = _context.Subscriptions.Include(s => s.Plan).Include(s => s.Sportsman);
-            return View(await workoutDbContext.ToListAsync());
+        {           
+            ViewBag.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return RedirectToAction("Plans", "Index");
+            //var workoutDbContext = _context.Subscriptions.Include(s => s.Plan).Include(s => s.Sportsman);
+            //return View(await workoutDbContext.ToListAsync());
+            var subsBySportsman = _context.Subscriptions.Where(s => s.SportsmanId == userId).Include(s => s.Plan);
+            return View(await subsBySportsman.ToListAsync());
         }
 
         // GET: Subscriptions/Details/5
@@ -41,8 +48,8 @@ namespace WorkoutWebApplication.Controllers
             {
                 return NotFound();
             }
-
-            return View(subscription);
+            return RedirectToAction("Details", "Plans", new { id = subscription.PlanId});
+            // return View(subscription);
         }
 
         // GET: Subscriptions/Create
@@ -64,13 +71,16 @@ namespace WorkoutWebApplication.Controllers
         public async Task<IActionResult> Create(int planId, string userId, [Bind("Id,PlanId,SportsmanId, Date")] Subscription subscription)
         {
             subscription.PlanId = planId;
-           // subscription.UserId = userId;
+           // RedirectToAction("Create", "Sportsmen", new { plannId = planId, userrId = userId });
+            subscription.UserId = userId;
+            subscription.SportsmanId = userId;
             subscription.Date = DateTime.Now;
             if (ModelState.IsValid)
             {
                 _context.Add(subscription);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Subscriptions", new { userId = userId});
+                //return RedirectToAction(nameof(Index));
             }
             ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Description", subscription.PlanId);
             ViewData["SportsmanId"] = new SelectList(_context.Sportsmen, "Id", "Id", subscription.SportsmanId);
@@ -126,6 +136,7 @@ namespace WorkoutWebApplication.Controllers
                         throw;
                     }
                 }
+                //return RedirectToAction("Index", "Subscriptions", new { userId = userId });
                 return RedirectToAction(nameof(Index));
             }
             ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Description", subscription.PlanId);
@@ -169,6 +180,7 @@ namespace WorkoutWebApplication.Controllers
             }
             
             await _context.SaveChangesAsync();
+            //return RedirectToAction("Index", "Subscriptions", new { userId = userId });
             return RedirectToAction(nameof(Index));
         }
 

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Core;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +42,7 @@ namespace WorkoutWebApplication.Controllers
             }
 
            //return View(plan);
-            return RedirectToAction("Index", "PlansWorkouts", new { id = plan.Id , name = plan.Name });
+            return RedirectToAction("Index", "PlansWorkouts", new { id = plan.Id , name = plan.Name, description = plan.Description });
         }
 
         // GET: Plans/Create
@@ -56,12 +58,22 @@ namespace WorkoutWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Plan plan)
         {
-            if (ModelState.IsValid)
+            if (!_context.Plans.Any(x => x.Name == plan.Name &&
+                            x.Description == plan.Description))
             {
-                _context.Add(plan);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(plan);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            //if (ModelState.IsValid)
+            //{
+            //    _context.Add(plan);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToAction(nameof(Index));
+            //}
             return View(plan);
         }
 
@@ -152,6 +164,65 @@ namespace WorkoutWebApplication.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        public ActionResult Export()
+        {
+            using (XLWorkbook workbook = new XLWorkbook())
+            {
+                var plans = _context.Plans.Include("PlansWorkouts").ToList();
+                foreach (var plan in plans)
+                {
+                    var worksheet = workbook.Worksheets.Add(plan.Name);
+                    worksheet.Cell("A1").Value = "Назва";
+                    worksheet.Cell("B1").Value = "Фокус";
+                    worksheet.Cell("C1").Value = "Тип";
+                    worksheet.Cell("D1").Value = "Тривалість";
+                    worksheet.Cell("E1").Value = "Обладнання";
+                    worksheet.Cell("F1").Value = "День тижня";
+                    //worksheet.Cell("F1").Value = "Категорія";
+                    //worksheet.Cell("G1").Value = "Інформація";
+                    worksheet.Row(1).Style.Font.Bold = true;
+
+                    var plansWorkouts = plan.PlansWorkouts.ToList();
+
+                    for (int i = 0; i < plansWorkouts.Count; i++)
+                    {
+                        //worksheet.Cell(i + 2, 1).Value = plansWorkouts[i].Name;
+                        //worksheet.Cell(i + 2, 7).Value = plansWorkouts[i].Info;
+
+                        var workouts = _context.Workouts.Where(w => w.Id == plansWorkouts[i].WorkoutId)
+                                                              .Include("Fa")
+                                                              .Include("Wt")
+                                                              .ToList();
+                        var weekDays = _context.WeekDays.Where(wd => wd.Id == plansWorkouts[i].WeekDayId)
+                                                              .ToList();
+                        //int j = 0;
+                        foreach (var workout in workouts)
+                        {
+                            worksheet.Cell(i + 2, 1).Value = workout.Name;
+                            worksheet.Cell(i + 2, 2).Value = workout.Fa.Name;
+                            worksheet.Cell(i + 2, 3).Value = workout.Wt.Name;
+                            worksheet.Cell(i + 2, 4).Value = workout.Duration;
+                            worksheet.Cell(i + 2, 5).Value = workout.Equipment;
+                        }
+                        foreach (var weekDay in weekDays)
+                        {
+                            worksheet.Cell(i + 2, 6).Value = weekDay.Name;
+                        }
+                    }
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Flush();
+                    return new FileContentResult(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    {
+                        FileDownloadName = $"library_{DateTime.UtcNow.ToShortDateString()}.xlsx"
+                    };
+                }
+            }
+        }
+
 
         private bool PlanExists(int id)
         {

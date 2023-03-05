@@ -4,17 +4,18 @@ namespace WorkoutWebApplication.ViewModel
 {
     public class RegisterViewModel
     {
-        [Required]
+
         [Display(Name ="Email")]
+        [Required(ErrorMessage = "Поле не повинно бути порожнім")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Поле не повинно бути порожнім")]
         [Display(Name = "Рік народження")]
         public int Year { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Поле не повинно бути порожнім")]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Поле не повинно бути порожнім")]
         [Compare("Password", ErrorMessage ="Паролі не співпадають")]
         [Display(Name = "Підтвердження паролю")]
         [DataType(DataType.Password)]

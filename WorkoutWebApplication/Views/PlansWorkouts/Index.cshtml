@@ -2,14 +2,17 @@
 
 @{
     ViewData["Title"] = "Тренування за планом";
-}
+
+    <link rel="stylesheet" href="~/css/PlanWorkouts.css" asp-append-version="true" />
+}@*
 @if (User.IsInRole("admin"))
 {
 
 <h1>Тренування за планом @ViewBag.PlanName</h1>
+    <h4> @ViewBag.PlanDesription</h4>
 
 <p>
-    @*<a asp-action="Create" asp-route-id="@ViewBag.PlanId">Додати тренування</a>*@
+    <a asp-action="Create" asp-route-id="@ViewBag.PlanId">Додати тренування</a>
     @Html.ActionLink("Додати тренування", "Create", new {planId = @ViewBag.PlanId})
 </p>
 <table class="table">
@@ -41,26 +44,26 @@
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {planId = @ViewBag.PlanId, id = item.Id}) |
-                @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |*@
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                   
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
 
                 @Html.ActionLink("Delete", "Delete", new {planId = @ViewBag.PlanId, id = item.Id}) |
-                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
-}
-@if (User.IsInRole("user"))
-{
-
+}*@
+@*
     <h1>Тренування за планом @ViewBag.PlanName</h1>
+
     <p>
-    @*<a asp-action="Create" asp-route-id="@ViewBag.PlanId">Додати тренування</a>*@
-        @Html.ActionLink("Підписатись", "Subscribe", new {planId = @ViewBag.PlanId})
-</p>
+
+       @Html.ActionLink("Підписатись", "Subscribe", new {planId = @ViewBag.PlanId})
+
+    </p>
     <table class="table">
         <thead>
             <tr>
@@ -79,7 +82,10 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                @if (item.WeekDayId == 1)
+                {
+
+                    <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.Plan.Name)
                     </td>
@@ -93,7 +99,83 @@
                         <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
                     </td>
                 </tr>
+                  
+                }
             }
         </tbody>
     </table>
-}
+   *@
+@*@if(User.IsInRole("user")){*@
+    <div class="cDQXUo">
+        <div class=" jAUWaR">
+            <h2 class="kfXHnL">@ViewBag.PlanName</h2>
+            @if (User.IsInRole("admin"))
+            {
+            <div class="d-flex">
+                    @Html.ActionLink("Додати", "Create", new {planId = @ViewBag.PlanId})
+            </div>
+            }
+            @if (User.IsInRole("user"))
+            {
+                @if (!@ViewBag.SubExists)
+                    { 
+                    <div class="d-flex">
+                        @Html.ActionLink("Підписатись", "Subscribe", new {planId = @ViewBag.PlanId})
+                </div>
+            }
+            }
+    </div>
+        <div class=" jAUWaR">
+            <h4>@ViewBag.PlanDesription</h4>
+        </div>
+        @for (var i = 1; i < 8; i++){
+        <div class="jtKbvk">
+            <div class="jAUWaR">
+                <div>
+                    <h2> День @i</h2>
+                </div>
+            </div>
+            <div class="iqoGPp">
+                <div class="hCfVFE">
+                    <div class="gwLHsv">
+                            @foreach (var item in Model){
+                                @if(item.WeekDayId == i-1){
+                                    <div class="hcWmlC">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="fdlCza">
+                                            <div class="efmBxP">
+                                                <img class=" lcxaVO" src="https://i.pinimg.com/564x/dc/09/9d/dc099d366cd2bdb4fd20aaa01a9a1948.jpg" >
+                                            </div>
+                                        </a>
+                                        <div class="jKxeGI">
+                                            <div>
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="hyiaCD">@item.Workout.Name</a>
+                                            </div>
+                                            <div class="m__t--10">
+                                                <span class="minutes-desc">@item.Workout.Duration хв</span>
+                                            </div>
+                                        </div>
+                                    @if (User.IsInRole("admin"))
+                                    {
+                                        <div class="jKxeGI">
+                                            @*<a asp-action="Delete" asp-route-id="@item.Id">
+                                            <div class="dawlOk">Видалити</div>
+                                            </a>*@
+                                            @Html.ActionLink("Видалити", "Delete", new {planId = @ViewBag.PlanId, id = item.Id}, new { @class = "dawlOk"} )
+                                            <div></div>
+                                        </div>
+                                    }
+                                    </div>
+                                }
+                            }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-fuse="22858577073" class="m__t--20"></div>
+        }
+    </div>
+
+@*}*@
+
+    

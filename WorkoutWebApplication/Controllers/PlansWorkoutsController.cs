@@ -22,15 +22,20 @@ namespace WorkoutWebApplication.Controllers
         }
 
         // GET: PlansWorkouts
-        public async Task<IActionResult> Index(int? id, string? name)
+        public async Task<IActionResult> Index(int? id, string? name, string description)
         {
             if (id == null) return RedirectToAction("Plans", "Index");
             //var workoutDbContext = _context.PlansWorkouts.Include(p => p.Plan).Include(p => p.WeekDay).Include(p => p.Workout);
            // return View(await workoutDbContext.ToListAsync());
             ViewBag.PlanId = id;
             ViewBag.PlanName = name;
+            ViewBag.PlanDesription = description;
+            bool subExists = _context.Subscriptions.Any(x => x.PlanId == id && x.SportsmanId == this.User
+            .FindFirstValue(ClaimTypes.NameIdentifier));
+            ViewBag.SubExists = subExists;
 
-            var workoutsByPlan = _context.PlansWorkouts.Where(pw => pw.PlanId == id).Include(pw => pw.Plan).Include(p => p.WeekDay).Include(p => p.Workout);
+            var workoutsByPlan = _context.PlansWorkouts.Where(pw => pw.PlanId == id).Include(pw => pw.Plan)
+                .Include(p => p.WeekDay).Include(p => p.Workout);
 
             return View(await workoutsByPlan.ToListAsync());
         }
@@ -50,7 +55,8 @@ namespace WorkoutWebApplication.Controllers
             }
 
             //return View(plan);
-            return RedirectToAction("Create", "Subscriptions", new { planId = plan.Id, userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier)});
+            return RedirectToAction("Create", "Subscriptions", new { planId = plan.Id, userId = this.User
+                .FindFirstValue(ClaimTypes.NameIdentifier)});
         }
 
         // GET: PlansWorkouts/Details/5
@@ -70,18 +76,19 @@ namespace WorkoutWebApplication.Controllers
             {
                 return NotFound();
             }
-
-            return View(plansWorkout);
+            return RedirectToAction("Details", "Workouts", new { id = plansWorkout.WorkoutId });
+            //return View(plansWorkout);
         }
 
         // GET: PlansWorkouts/Create
         public IActionResult Create(int planId)
         {
-            // ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name");
+            // ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name");            
             ViewData["WeekDayId"] = new SelectList(_context.WeekDays, "Id", "Name");
             ViewData["WorkoutId"] = new SelectList(_context.Workouts, "Id", "Name");
             ViewBag.PlanId = planId;
             ViewBag.PlanName = _context.Plans.Where(p => p.Id == planId).FirstOrDefault().Name;
+            //ViewBag.PlanDescription = _context.Plans.Where(p => p.Id == planId).FirstOrDefault().Description;
             return View();
         }
 
@@ -93,18 +100,28 @@ namespace WorkoutWebApplication.Controllers
         public async Task<IActionResult> Create(int planId, [Bind("Id,WorkoutId,WeekDayId,PlanId")] PlansWorkout plansWorkout)
         {
             plansWorkout.PlanId = planId;
-            if (ModelState.IsValid)
-            {
-                _context.Add(plansWorkout);
-                await _context.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
-                return RedirectToAction("Index", "PlansWorkouts", new { id = planId, name = _context.Plans.Where(p => p.Id == planId).FirstOrDefault().Name});
-            }
-            //ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name", plansWorkout.PlanId);
             ViewData["WeekDayId"] = new SelectList(_context.WeekDays, "Id", "Name", plansWorkout.WeekDayId);
             ViewData["WorkoutId"] = new SelectList(_context.Workouts, "Id", "Name", plansWorkout.WorkoutId);
-            // return View(plansWorkout);
-            return RedirectToAction("Index", "PlansWorkouts", new { id = planId, name = _context.Plans.Where(p => p.Id == planId).FirstOrDefault().Name });
+            if (ModelState.IsValid)
+            {
+                if (PlansWorkoutExists(planId, plansWorkout.WorkoutId, plansWorkout.WeekDayId))
+                {
+                    ModelState.AddModelError("DuplicatePlansWorkout", "Вже існує");
+                    return View(plansWorkout);
+                    //return RedirectToAction("Create", "PlansWorkouts", new { planId = planId });
+                }
+                _context.Add(plansWorkout);
+                    await _context.SaveChangesAsync();
+                    //return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index", "PlansWorkouts", new { id = planId, name = _context.Plans
+                        .Where(p => p.Id == planId).FirstOrDefault().Name, description = _context.Plans
+                        .Where(p => p.Id == planId).FirstOrDefault().Description });
+            }
+            //ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name", plansWorkout.PlanId);
+            //ViewData["WeekDayId"] = new SelectList(_context.WeekDays, "Id", "Name", plansWorkout.WeekDayId);
+            //ViewData["WorkoutId"] = new SelectList(_context.Workouts, "Id", "Name", plansWorkout.WorkoutId);
+            //return RedirectToAction("Index", "PlansWorkouts", new { id = planId, name = _context.Plans.Where(p => p.Id == planId).FirstOrDefault().Name, description = _context.Plans.Where(p => p.Id == planId).FirstOrDefault().Description });
+            return View(plansWorkout);
         }
 
         // GET: PlansWorkouts/Edit/5
@@ -161,7 +178,8 @@ namespace WorkoutWebApplication.Controllers
                     }
                 }
                 //return RedirectToAction(nameof(Index));
-                return RedirectToAction("Index", "PlansWorkouts", new { id = planId, name = _context.Plans.Where(p => p.Id == planId).FirstOrDefault().Name });
+                return RedirectToAction("Index", "PlansWorkouts", new { id = planId, name = _context.Plans
+                    .Where(p => p.Id == planId).FirstOrDefault().Name });
             }
             ViewData["PlanId"] = new SelectList(_context.Plans, "Id", "Name", plansWorkout.PlanId);
             ViewData["WeekDayId"] = new SelectList(_context.WeekDays, "Id", "Name", plansWorkout.WeekDayId);
@@ -209,12 +227,18 @@ namespace WorkoutWebApplication.Controllers
             
             await _context.SaveChangesAsync();
             //return RedirectToAction(nameof(Index));
-            return RedirectToAction("Index", "PlansWorkouts", new { id = pi, name = _context.Plans.Where(p => p.Id == pi).FirstOrDefault().Name });
+            return RedirectToAction("Index", "PlansWorkouts", new { id = pi, name = _context.Plans
+                .Where(p => p.Id == pi).FirstOrDefault().Name, description = _context.Plans
+                .Where(p => p.Id == planId).FirstOrDefault().Description });
         }
 
         private bool PlansWorkoutExists(int id)
         {
           return _context.PlansWorkouts.Any(e => e.Id == id);
+        }
+        public bool PlansWorkoutExists(int planId, int workoutId, int weekDayId)
+        {
+            return _context.PlansWorkouts.Any(e => e.PlanId == planId && e.WorkoutId == workoutId && e.WeekDayId == weekDayId);
         }
     }
 }

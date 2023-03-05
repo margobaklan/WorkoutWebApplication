@@ -1,0 +1,57 @@
+﻿.Home-styled_available {
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 42px;
+    margin-bottom: 16px;
+}
+.Home-styled_box {
+    width: 100%;
+    margin: 190px auto;
+    max-width: 1288px;
+    padding: 0 24px;
+    top: 70px;
+    text-align: left;
+    background-color: unset;
+}
+
+.Home-styled_button_group {
+    gap: 10px;
+    align-items: flex-start;
+    margin: 20px 0px 0px;
+    display: grid;
+    flex-direction: column;
+    -webkit-box-align: center;
+    max-width: 224px;
+    box-sizing: border-box;
+}
+.Button-styled__LinkButton {
+    font-family: Manrope, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    line-height: 1.5715;
+    font-size: 14px;
+    width: 230px;
+    height: 35px;
+    border-radius: 35px;
+    border-block-color: black;
+    padding: 0px 20px;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    transition: all 0.3s ease 0s;
+    white-space: nowrap;
+    background-color: #303033;
+    color: #fff;
+    border: 1px solid transparent;
+    text-decoration: none;
+    outline: none;
+    cursor: pointer;
+}
+    .Button-styled__LinkButton:hover {
+        background-color: #fff;
+        color: black;
+        border: 1px solid black;
+    }
+/*.account-icon {
+    background: transparent;
+}*/
